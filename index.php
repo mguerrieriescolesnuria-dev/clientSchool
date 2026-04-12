@@ -2,118 +2,63 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/vendor/autoload.php';
+/**
+ * Front Controller - REST API Entry Point
+ * 
+ * Initializes the REST API with Router and dispatches requests
+ */
 
-use Dotenv\Dotenv;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Infrastructure\Persistence\DoctrineStudentRepository;
-use App\Infrastructure\Persistence\DoctrineTeacherRepository;
-use App\Infrastructure\Persistence\DoctrineCourseRepository;
-use App\Infrastructure\Persistence\DoctrineSubjectRepository;
-use App\Infrastructure\Persistence\DoctrineEnrollmentRepository;
-use App\Application\CreateStudent\CreateStudentHandler;
-use App\Application\CreateTeacher\CreateTeacherHandler;
-use App\Application\CreateCourse\CreateCourseHandler;
-use App\Application\CreateSubject\CreateSubjectHandler;
-use App\Application\EnrollStudent\EnrollStudentHandler;
-use App\Application\AssignTeacherToSubject\AssignTeacherToSubjectHandler;
-use App\Application\UnassignTeacherFromSubject\UnassignTeacherFromSubjectHandler;
-use App\Infrastructure\Web\Controller\StudentController;
-use App\Infrastructure\Web\Controller\TeacherController;
-use App\Infrastructure\Web\Controller\CourseController;
-use App\Infrastructure\Web\Controller\SubjectController;
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/app/helpers.php';
 
 // Load environment variables
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+$dotenv = \Dotenv\Dotenv::createImmutable(__DIR__);
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv->load();
+}
 
-// Bootstrap Doctrine EntityManager
-$entityManager = require __DIR__ . '/bootstrap.php';
+// Set headers for CORS and API
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Content-Type: application/json');
 
-// Create repositories
-$studentRepository = new DoctrineStudentRepository($entityManager);
-$teacherRepository = new DoctrineTeacherRepository($entityManager);
-$courseRepository = new DoctrineCourseRepository($entityManager);
-$subjectRepository = new DoctrineSubjectRepository($entityManager);
-$enrollmentRepository = new DoctrineEnrollmentRepository($entityManager);
+// Handle OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
-// Create handlers
-$createStudentHandler = new CreateStudentHandler($studentRepository);
-$createTeacherHandler = new CreateTeacherHandler($teacherRepository);
-$createCourseHandler = new CreateCourseHandler($courseRepository);
-$createSubjectHandler = new CreateSubjectHandler($subjectRepository, $courseRepository);
-$enrollStudentHandler = new EnrollStudentHandler($studentRepository, $courseRepository, $enrollmentRepository);
-$assignTeacherHandler = new AssignTeacherToSubjectHandler($teacherRepository, $subjectRepository);
-$unassignTeacherHandler = new UnassignTeacherFromSubjectHandler($teacherRepository, $subjectRepository);
+use App\Http\Router;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
 
-// Create controllers
-$studentController = new StudentController(
-    $studentRepository,
-    $courseRepository,
-    $createStudentHandler,
-    $enrollStudentHandler
-);
+// Register routes
+Router::get('api/teachers', [TeacherController::class, 'index']);
+Router::get('api/teachers/{id}', [TeacherController::class, 'show']);
+Router::post('api/teachers', [TeacherController::class, 'store']);
+Router::put('api/teachers/{id}', [TeacherController::class, 'update']);
+Router::delete('api/teachers/{id}', [TeacherController::class, 'destroy']);
 
-$teacherController = new TeacherController(
-    $teacherRepository,
-    $subjectRepository,
-    $createTeacherHandler,
-    $assignTeacherHandler,
-    $unassignTeacherHandler
-);
+Router::get('api/students', [StudentController::class, 'index']);
+Router::get('api/students/{id}', [StudentController::class, 'show']);
+Router::post('api/students', [StudentController::class, 'store']);
+Router::put('api/students/{id}', [StudentController::class, 'update']);
+Router::delete('api/students/{id}', [StudentController::class, 'destroy']);
 
-$courseController = new CourseController(
-    $courseRepository,
-    $createCourseHandler
-);
+Router::get('api/subjects', [SubjectController::class, 'index']);
+Router::get('api/subjects/{id}', [SubjectController::class, 'show']);
+Router::post('api/subjects', [SubjectController::class, 'store']);
+Router::put('api/subjects/{id}', [SubjectController::class, 'update']);
+Router::delete('api/subjects/{id}', [SubjectController::class, 'destroy']);
 
-$subjectController = new SubjectController(
-    $subjectRepository,
-    $courseRepository,
-    $createSubjectHandler
-);
+Router::get('api/health', fn() => json_response(['status' => 'OK'], 200));
+Router::get('/', fn() => json_response(['message' => 'clientSchool API v1.0'], 200));
 
-// Routing
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$routes = require __DIR__ . '/config/routes.php';
-$controllers = [
-    'student' => $studentController,
-    'teacher' => $teacherController,
-    'course' => $courseController,
-    'subject' => $subjectController,
-];
-
+// Dispatch the request
 try {
-    $route = $routes[$path] ?? null;
-
-    if ($route === null) {
-        http_response_code(404);
-        echo '<h1>404 - Pàgina no trobada</h1>';
-        echo '<p><a href="/">Tornar a l\'inici</a></p>';
-        return;
-    }
-
-    if ($route === 'home') {
-        include __DIR__ . '/views/home.php';
-        return;
-    }
-
-    [$controllerKey, $action] = explode('.', $route);
-    $controller = $controllers[$controllerKey] ?? null;
-
-    if ($controller === null || !method_exists($controller, $action)) {
-        http_response_code(500);
-        echo '<h1>500 - Error del servidor</h1>';
-        echo '<p>Route controller/action not configured correctly</p>';
-        echo '<p><a href="/">Tornar a l\'inici</a></p>';
-        return;
-    }
-
-    $controller->{$action}();
-    return;
-} catch (Exception $e) {
-    http_response_code(500);
-    echo '<h1>500 - Error del servidor</h1>';
-    echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
-    echo '<p><a href="/">Tornar a l\'inici</a></p>';
+    Router::dispatch();
+} catch (\Exception $e) {
+    error_response($e->getMessage(), 500);
 }
