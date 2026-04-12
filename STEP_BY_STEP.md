@@ -7,6 +7,27 @@ Sigue estos pasos en orden para verificar que todo funciona correctamente.
 
 ---
 
+## ⚡ OPCIÓN RÁPIDA: Verificación en 30 segundos
+
+Si solo quieres verificar rápidamente que todo funciona:
+
+```bash
+cd /home/linux/projectes/clientSchool
+php verify-all.php
+```
+
+**Esperado:**
+```
+🎉 ¡TODAS LAS PRUEBAS PASARON!
+✅ El proyecto estructura está correctamente
+✅ Todos los endpoints responden correctamente
+✅ El manejo de errores funciona
+```
+
+> ℹ️ Este script ejecuta **12 pruebas** en todos los endpoints principales.
+
+---
+
 ## 🚀 PASO 1: Preparación (1-2 minutos)
 
 ### 1.1 - Verifica que estés en el directorio correcto
