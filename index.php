@@ -9,7 +9,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/app/helpers.php';
+require_once __DIR__ . '/src/helpers.php';
 
 // Load environment variables
 $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__);
@@ -29,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-use App\Http\Router;
-use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\SubjectController;
+use App\Infrastructure\Web\Router;
+use App\Infrastructure\Web\TeacherController;
+use App\Infrastructure\Web\StudentController;
+use App\Infrastructure\Web\SubjectController;
 
 // Register routes
 Router::get('api/teachers', [TeacherController::class, 'index']);

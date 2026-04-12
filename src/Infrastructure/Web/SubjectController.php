@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Web;
 
-use App\Models\Domain\Subject\Subject;
-use App\Models\Domain\Subject\SubjectId;
+use App\Domain\Subject\Subject;
+use App\Domain\Subject\SubjectId;
 
 class SubjectController
 {

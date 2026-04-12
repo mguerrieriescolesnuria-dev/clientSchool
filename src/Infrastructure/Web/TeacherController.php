@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Web;
 
-use App\Models\Domain\Teacher\Teacher;
-use App\Models\Domain\Teacher\TeacherId;
+use App\Domain\Teacher\Teacher;
+use App\Domain\Teacher\TeacherId;
 
 class TeacherController
 {

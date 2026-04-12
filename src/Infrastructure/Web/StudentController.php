@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Web;
 
-use App\Models\Domain\Student\Student;
-use App\Models\Domain\Student\StudentId;
+use App\Domain\Student\Student;
+use App\Domain\Student\StudentId;
 
 class StudentController
 {
