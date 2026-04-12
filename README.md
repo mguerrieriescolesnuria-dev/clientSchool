@@ -1,123 +1,81 @@
-# clientSchool - REST API Backend
+# clientSchool
 
-**Versió:** 1.0  
-**Part:** 1 (API Backend)  
-**Data:** 12 d'abril de 2026  
-**Estat:** ✅ Completat
+**School Management REST API** - Teachers, Students, Subjects
 
-> REST API Backend per a la gestió d'una escola: estudiants, professors, assignatures i cursos.
+**Version:** 1.0  
+**Status:** ✅ Part 1 Complete
 
 ---
 
-## 📖 Documentació
+## 🚀 Quick Start
 
-Tota la documentació es troba en la carpeta `docs/`:
+Verify all endpoints in 30 seconds:
 
-| Document | Descripció |
-|----------|-----------|
-| **[API_BACKEND.md](docs/API_BACKEND.md)** | 📋 Evidència de Part 1 - Endpoints, arquitectura i exemples |
-| **[TESTING.md](docs/TESTING.md)** | 🧪 Guia completa de testing amb múltiples opcions |
-| **[STEP_BY_STEP.md](docs/STEP_BY_STEP.md)** | 👣 Verificació pas a pas (opció ràpida en 30s) |
-| **[STATUS.md](docs/STATUS.md)** | 📊 Resum complet del projecte i estat |
-| **[IMPLEMENTATION.md](docs/IMPLEMENTATION.md)** | 🏗️ Detalls d'implementació i arquitectura DDD |
-| **[GITHUB_SETUP.md](docs/GITHUB_SETUP.md)** | 🔧 Guia per configurar GitHub |
-
----
-
-## 🚀 Inici Ràpid
-
-### Opció 1: Verificació Completa (30 segons)
 ```bash
-cd /home/linux/projectes/clientSchool
 php verify-all.php
 ```
 
-### Opció 2: Amb PHP Server
+Expected result:
+```
+🎉 ¡TODAS LAS PRUEBAS PASARON!
+✅ El proyecto estructura está correctamente
+✅ Todos los endpoints responden correctamente
+✅ El manejo de errores funciona
+```
+
+---
+
+## 📖 Full Documentation
+
+**[docs/API_BACKEND.md](docs/API_BACKEND.md)** - Complete API documentation
+- 19 REST Endpoints
+- DDD Architecture
+- Examples for Postman/Apidog
+
+---
+
+## 🧪 Testing
+
 ```bash
+# PHP Server
 php -S localhost:8000 -r router.php
-# Després: curl http://localhost:8000/api/health
-```
+curl http://localhost:8000/api/health
 
-### Opció 3: CLI Direct
-```bash
+# CLI Direct
 REQUEST_METHOD=GET REQUEST_URI=/api/health php index.php
+
+# Automated Tests
+php verify-all.php
 ```
 
 ---
 
-## ✨ Funcionalitats
+## ✨ Features
 
-- **19 Endpoints REST** - Completament funcionals i testats
-- **Arquitectura DDD** - Domain, Application, Infrastructure layers
-- **Validació de Dades** - Errors 422 per validació fallida
-- **Manejo de 404** - Recursos no trobats retornen 404
-- **JSON Responses** - Format consistente: `{status, data, message}`
-- **Tests 100%** - 12/12 tests verificats
-
----
-
-## 📋 Recursos
-
-- **Students** - 5 endpoints (GET, POST, PUT, DELETE, GET {id})
-- **Teachers** - 5 endpoints
-- **Subjects** - 5 endpoints
-- **Courses** - 2 endpoints (GET list, POST create)
-- **Health Check** - `/api/health`
+- 19 REST Endpoints (100% tested)
+- DDD Architecture
+- Data Validation (422 errors)
+- Proper 404 handling
+- JSON responses
 
 ---
 
-## 🏗️ Estructura del Projecte
+## 📚 Resources
 
-```
-src/
-├── Domain/              # Entitats de negoci
-│   ├── Teacher/
-│   ├── Student/
-│   ├── Subject/
-│   ├── Course/
-│   └── Enrollment/
-├── Application/         # Use Cases
-│   ├── CreateStudent/
-│   ├── CreateTeacher/
-│   └── ...
-└── Infrastructure/Web/  # Controllers & Router
-    ├── Router.php
-    ├── *Controller.php
-    └── ...
-```
+- Students (5 endpoints)
+- Teachers (5 endpoints)
+- Subjects (5 endpoints)
+- Courses (2 endpoints)
 
 ---
 
-## 📈 Certificats de Qualitat
+## 📄 Other Docs
 
-✅ **Tests**: 12/12 passat (100%)  
-✅ **Estrutura**: DDD completa  
-✅ **Documentació**: 7 fitxers .md (2422 línies)  
-✅ **Git**: 8 commits descriptius  
-
----
-
-## 🎯 Comandos Útils
-
-| Comanda | Descripció |
-|---------|-----------|
-| `php verify-all.php` | Tests tots els endpoints |
-| `php -S localhost:8000 -r router.php` | Inicia servidor |
-| `php cli-test.php` | Tests CLI alternatiu |
-| `git log --oneline` | Veure historial |
-| `composer dumpautoload` | Regenerer autoload |
+- [TESTING.md](TESTING.md) - Testing guide
+- [STEP_BY_STEP.md](STEP_BY_STEP.md) - Verification steps
+- [IMPLEMENTATION.md](IMPLEMENTATION.md) - Implementation details
+- [GITHUB_SETUP.md](GITHUB_SETUP.md) - GitHub setup
 
 ---
 
-## 📞 Suport
-
-**Per més informació, veure:**
-- [API_BACKEND.md](docs/API_BACKEND.md) - Documentació principal
-- [STEP_BY_STEP.md](docs/STEP_BY_STEP.md) - Tutorial pas a pas
-- [TESTING.md](docs/TESTING.md) - Guia de testing
-
----
-
-**Data de Lliurament:** 12 d'abril de 2026  
-**Data d'Avaluació:** 16 d'abril de 2026  
-**Projecte:** clientSchool Part 1 - API Backend
+**Evaluation:** April 16, 2026
