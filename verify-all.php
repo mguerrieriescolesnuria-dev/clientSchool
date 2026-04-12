@@ -99,11 +99,7 @@ if ($failed === 0) {
     echo "\n🎉 ¡TODAS LAS PRUEBAS PASARON!\n";
     echo "✅ El proyecto estructura está correctamente\n";
     echo "✅ Todos los endpoints responden correctamente\n";
-    echo "✅ El manejo de errores funciona\n";
-    echo "\n📝 Próximos pasos:\n";
-    echo "   1. Push a GitHub (ver GITHUB_SETUP.md)\n";
-    echo "   2. Crear screenshots en Postman\n";
-    echo "   3. Preparar presentación de Parte 1 (Evaluación: 16 Abril)\n\n";
+    echo "✅ El manejo de errores funciona\n\n";
     exit(0);
 } else {
     echo "\n⚠️  Algunas pruebas fallaron.\n";
