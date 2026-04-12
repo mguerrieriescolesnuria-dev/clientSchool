@@ -19,12 +19,18 @@ class SubjectController
 
     public function show(string $id): void
     {
-        json_response([
-            'id' => $id,
-            'name' => 'Mathematics',
-            'course' => 'A1',
-            'teacher' => ['id' => '1', 'name' => 'John Doe']
-        ], 200);
+        // Mock data - check if subject exists
+        $subjects = [
+            '1' => ['id' => '1', 'name' => 'Mathematics', 'course' => 'A1', 'teacher' => ['id' => '1', 'name' => 'John Doe']],
+            '2' => ['id' => '2', 'name' => 'Physics', 'course' => 'A1', 'teacher' => ['id' => '2', 'name' => 'Jane Smith']],
+        ];
+        
+        if (!isset($subjects[$id])) {
+            error_response('Subject not found', 404);
+            return;
+        }
+        
+        json_response($subjects[$id], 200);
     }
 
     public function store(): void

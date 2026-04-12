@@ -21,12 +21,18 @@ class TeacherController
     public function show(string $id): void
     {
         // TODO: Implement show teacher
-        json_response([
-            'id' => $id,
-            'name' => 'John Doe',
-            'email' => 'john@school.com',
-            'subjects' => []
-        ], 200);
+        // Mock data - check if teacher exists
+        $teachers = [
+            '1' => ['id' => '1', 'name' => 'John Doe', 'email' => 'john@school.com', 'subjects' => []],
+            '2' => ['id' => '2', 'name' => 'Jane Smith', 'email' => 'jane@school.com', 'subjects' => []],
+        ];
+        
+        if (!isset($teachers[$id])) {
+            error_response('Teacher not found', 404);
+            return;
+        }
+        
+        json_response($teachers[$id], 200);
     }
 
     public function store(): void

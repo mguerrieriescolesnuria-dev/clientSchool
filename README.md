@@ -9,38 +9,46 @@
 
 ```
 clientSchool/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/        # REST Controllers
-│   │   │   ├── TeacherController.php
-│   │   │   ├── StudentController.php
-│   │   │   └── SubjectController.php
-│   │   ├── Actions/            # Application Use Cases
-│   │   ├── Router.php          # Simple REST Router
-│   │   └── Middleware/
-│   ├── Models/
-│   │   └── Domain/             # DDD Domain entities
-│   │       ├── Teacher/
-│   │       ├── Student/
-│   │       ├── Subject/
-│   │       └── ...
-│   ├── Infrastructure/         # Database & Persistence
-│   └── helpers.php
+├── src/                                # All application code
+│   ├── Domain/                         # DDD Domain entities
+│   │   ├── Teacher/
+│   │   ├── Student/
+│   │   ├── Subject/
+│   │   ├── Course/
+│   │   ├── Enrollment/
+│   │   └── User/
+│   ├── Application/                    # Use Cases / Business Logic
+│   │   ├── CreateTeacher/
+│   │   ├── CreateStudent/
+│   │   ├── CreateSubject/
+│   │   └── ...
+│   ├── Infrastructure/
+│   │   ├── Persistence/                # Repositories, Database
+│   │   └── Web/                        # REST Controllers & Router
+│   │       ├── TeacherController.php
+│   │       ├── StudentController.php
+│   │       ├── SubjectController.php
+│   │       └── Router.php
+│   └── helpers.php                     # Utility functions
 ├── public/
-│   └── index.php               # API entry point
+│   └── index.php                       # Static files (if any)
 ├── routes/
-│   └── api.php                 # API routes definition
+│   └── api.php                         # API routes definition
 ├── database/
 │   ├── migrations/
 │   └── seeds/
 ├── tests/
-│   ├── Feature/                # API endpoint tests
-│   └── Unit/                   # Unit tests
+│   ├── Feature/
+│   └── Unit/
 ├── config/
-│   └── database.php
 ├── storage/
+├── bootstrap/
+├── index.php                           # API entry point (root)
+├── router.php                          # PHP server router script
+├── cli-test.php                        # CLI testing script
 ├── .env
-└── composer.json
+├── composer.json
+└── README.md
 ```
 
 ## Installation
@@ -48,7 +56,6 @@ clientSchool/
 ### Prerequisites
 - PHP 8.1+
 - Composer
-- MySQL 8.0+ (optional, for persistence)
 
 ### Setup
 
@@ -58,16 +65,18 @@ clientSchool/
    composer install
    ```
 
-2. **Copy environment file** (already done)
+2. **Generate autoloader**
    ```bash
-   cp .env.example .env
+   composer dumpautoload
    ```
 
-3. **Generate application key** (if applicable)
-
-4. **Run server**
+3. **Run server**
    ```bash
-   php -S localhost:8000 -t public
+   # Option 1: Using PHP built-in server
+   php -S localhost:8000 -r router.php
+   
+   # Option 2: Direct execution (CLI testing)
+   REQUEST_METHOD=GET REQUEST_URI=/api/health php index.php
    ```
 
 The API will be available at: `http://localhost:8000/api`

@@ -19,12 +19,18 @@ class StudentController
 
     public function show(string $id): void
     {
-        json_response([
-            'id' => $id,
-            'name' => 'Alice Johnson',
-            'email' => 'alice@student.com',
-            'enrollments' => []
-        ], 200);
+        // Mock data - check if student exists
+        $students = [
+            '1' => ['id' => '1', 'name' => 'Alice Johnson', 'email' => 'alice@student.com', 'enrollments' => []],
+            '2' => ['id' => '2', 'name' => 'Bob Wilson', 'email' => 'bob@student.com', 'enrollments' => []],
+        ];
+        
+        if (!isset($students[$id])) {
+            error_response('Student not found', 404);
+            return;
+        }
+        
+        json_response($students[$id], 200);
     }
 
     public function store(): void
