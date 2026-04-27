@@ -362,8 +362,8 @@
             <section class="hero">
                 <span class="eyebrow">DAW M0613 · Client Laravel</span>
                 <h1>clientSchool Frontend</h1>
-                <p>Client Laravel connectat a la teva API REST de students, teachers i subjects.</p>
-                <p>Per aquesta part tens un accés bàsic i un dashboard per crear, editar i eliminar registres.</p>
+                <p>He preparat aquest client Laravel perquè es connecti a la meva API REST de students, teachers i subjects.</p>
+                <p>En aquesta part del projecte he deixat un accés bàsic i un dashboard des d'on puc crear, editar i eliminar registres.</p>
                 <div class="api-box">
                     API configurada a <strong>{{ $apiBaseUrl }}</strong>
                 </div>
