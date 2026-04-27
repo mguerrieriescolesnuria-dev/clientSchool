@@ -4,51 +4,41 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Web;
 
-use App\Domain\Student\Student;
-use App\Domain\Student\StudentId;
+use App\Infrastructure\Persistence\SchoolApiStore;
 
 class StudentController
 {
+    public function __construct(
+        private readonly SchoolApiStore $store = new SchoolApiStore()
+    ) {}
+
     public function index(): void
     {
-        json_response([
-            ['id' => '1', 'name' => 'Alice Johnson', 'email' => 'alice@student.com'],
-            ['id' => '2', 'name' => 'Bob Wilson', 'email' => 'bob@student.com'],
-        ], 200);
+        json_response($this->store->all('students'), 200);
     }
 
     public function show(string $id): void
     {
-        // Mock data - check if student exists
-        $students = [
-            '1' => ['id' => '1', 'name' => 'Alice Johnson', 'email' => 'alice@student.com', 'enrollments' => []],
-            '2' => ['id' => '2', 'name' => 'Bob Wilson', 'email' => 'bob@student.com', 'enrollments' => []],
-        ];
-        
-        if (!isset($students[$id])) {
+        $student = $this->store->find('students', $id);
+
+        if ($student === null) {
             error_response('Student not found', 404);
             return;
         }
-        
-        json_response($students[$id], 200);
+
+        json_response($student, 200);
     }
 
     public function store(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        if (!$data || empty($data['name']) || empty($data['email'])) {
-            error_response('Name and email are required', 422, [
-                'name' => empty($data['name'] ?? null) ? ['Name is required'] : [],
-                'email' => empty($data['email'] ?? null) ? ['Email is required'] : []
-            ]);
+        try {
+            $student = $this->store->create('students', $data ?? []);
+            json_response($student, 201, 'Student created successfully');
+        } catch (\InvalidArgumentException $exception) {
+            error_response($exception->getMessage(), 422);
         }
-
-        json_response([
-            'id' => uniqid(),
-            'name' => $data['name'],
-            'email' => $data['email'],
-        ], 201, 'Student created successfully');
     }
 
     public function update(string $id): void
@@ -59,15 +49,23 @@ class StudentController
             error_response('Invalid data', 422);
         }
 
-        json_response([
-            'id' => $id,
-            'name' => $data['name'] ?? 'Alice Johnson',
-            'email' => $data['email'] ?? 'alice@student.com',
-        ], 200, 'Student updated successfully');
+        $student = $this->store->update('students', $id, $data);
+
+        if ($student === null) {
+            error_response('Student not found', 404);
+            return;
+        }
+
+        json_response($student, 200, 'Student updated successfully');
     }
 
     public function destroy(string $id): void
     {
+        if (!$this->store->delete('students', $id)) {
+            error_response('Student not found', 404);
+            return;
+        }
+
         json_response([], 200, 'Student deleted successfully');
     }
 }

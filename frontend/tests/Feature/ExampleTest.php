@@ -16,7 +16,7 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $response->assertSee('ClientSchool Frontend');
+        $response->assertSee('clientSchool Frontend');
         $response->assertSee('Iniciar sessió');
     }
 
@@ -27,7 +27,7 @@ class ExampleTest extends TestCase
         $response = $this->actingAs($user)->get('/app');
 
         $response->assertStatus(200);
-        $response->assertSee('Panell del client SPA');
+        $response->assertSee('Dashboard');
     }
 
     public function test_user_can_register_and_enter_dashboard(): void

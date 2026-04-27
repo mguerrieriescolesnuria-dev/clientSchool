@@ -4,54 +4,41 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Web;
 
-use App\Domain\Teacher\Teacher;
-use App\Domain\Teacher\TeacherId;
+use App\Infrastructure\Persistence\SchoolApiStore;
 
 class TeacherController
 {
+    public function __construct(
+        private readonly SchoolApiStore $store = new SchoolApiStore()
+    ) {}
+
     public function index(): void
     {
-        // TODO: Implement list teachers
-        json_response([
-            ['id' => '1', 'name' => 'John Doe', 'email' => 'john@school.com'],
-            ['id' => '2', 'name' => 'Jane Smith', 'email' => 'jane@school.com'],
-        ], 200);
+        json_response($this->store->all('teachers'), 200);
     }
 
     public function show(string $id): void
     {
-        // TODO: Implement show teacher
-        // Mock data - check if teacher exists
-        $teachers = [
-            '1' => ['id' => '1', 'name' => 'John Doe', 'email' => 'john@school.com', 'subjects' => []],
-            '2' => ['id' => '2', 'name' => 'Jane Smith', 'email' => 'jane@school.com', 'subjects' => []],
-        ];
-        
-        if (!isset($teachers[$id])) {
+        $teacher = $this->store->find('teachers', $id);
+
+        if ($teacher === null) {
             error_response('Teacher not found', 404);
             return;
         }
-        
-        json_response($teachers[$id], 200);
+
+        json_response($teacher, 200);
     }
 
     public function store(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        if (!$data || empty($data['name']) || empty($data['email'])) {
-            error_response('Name and email are required', 422, [
-                'name' => empty($data['name'] ?? null) ? ['Name is required'] : [],
-                'email' => empty($data['email'] ?? null) ? ['Email is required'] : []
-            ]);
+        try {
+            $teacher = $this->store->create('teachers', $data ?? []);
+            json_response($teacher, 201, 'Teacher created successfully');
+        } catch (\InvalidArgumentException $exception) {
+            error_response($exception->getMessage(), 422);
         }
-
-        // TODO: Create teacher with repository
-        json_response([
-            'id' => uniqid(),
-            'name' => $data['name'],
-            'email' => $data['email'],
-        ], 201, 'Teacher created successfully');
     }
 
     public function update(string $id): void
@@ -62,17 +49,23 @@ class TeacherController
             error_response('Invalid data', 422);
         }
 
-        // TODO: Update teacher with repository
-        json_response([
-            'id' => $id,
-            'name' => $data['name'] ?? 'John Doe',
-            'email' => $data['email'] ?? 'john@school.com',
-        ], 200, 'Teacher updated successfully');
+        $teacher = $this->store->update('teachers', $id, $data);
+
+        if ($teacher === null) {
+            error_response('Teacher not found', 404);
+            return;
+        }
+
+        json_response($teacher, 200, 'Teacher updated successfully');
     }
 
     public function destroy(string $id): void
     {
-        // TODO: Delete teacher with repository
+        if (!$this->store->delete('teachers', $id)) {
+            error_response('Teacher not found', 404);
+            return;
+        }
+
         json_response([], 200, 'Teacher deleted successfully');
     }
 }

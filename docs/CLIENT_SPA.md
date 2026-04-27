@@ -1,4 +1,4 @@
-# Client SPA Laravel - Part 2
+# Client Laravel - Part 2
 
 **Document:** Evidencia de la Part 2 del projecte `clientSchool`  
 **Data:** 27 d'abril de 2026  
@@ -8,15 +8,16 @@
 
 - Carpeta `frontend/` amb una aplicació Laravel separada
 - Autenticació bàsica amb usuari i contrasenya
-- Client SPA per consumir `students`, `teachers` i `subjects`
+- Client Laravel per consumir `students`, `teachers` i `subjects`
 - Proxy Laravel cap al backend existent
 - Tests funcionals del client
+- Dashboard amb formularis normals per crear, editar i eliminar registres
 
 ## Estructura
 
 ```text
 backend/     -> wrapper per presentar i executar la Part 1 sense tocar-la
-frontend/    -> aplicació Laravel SPA
+frontend/    -> aplicació Laravel client
 docs/
   API_BACKEND.md
   CLIENT_SPA.md
@@ -54,4 +55,4 @@ php artisan test
 ## Notes
 
 - La Part 1 no s'ha modificat funcionalment
-- El client d'aquesta entrega usa login bàsic i dashboard CRUD
+- El client d'aquesta entrega usa login bàsic i dashboard CRUD sense JavaScript obligatori
