@@ -5,134 +5,513 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>clientSchool Frontend</title>
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #5f6f89;
+            --line: #d9e0ea;
+            --warm: #d97706;
+            --warm-dark: #b45309;
+            --teal: #0f766e;
+            --teal-dark: #115e59;
+            --bg-a: #fff7e8;
+            --bg-b: #edf9f5;
+            --panel: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: Georgia, "Times New Roman", serif;
+            background:
+                radial-gradient(circle at top left, rgba(217, 119, 6, 0.18), transparent 28%),
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.15), transparent 30%),
+                linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 55%, #f6f7fb 100%);
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px 48px;
+        }
+
+        .hero,
+        .panel,
+        .card,
+        .table-card,
+        .form-card {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(25, 38, 60, 0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .landing-grid,
+        .dashboard-grid,
+        .main-grid,
+        .stats-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .landing-grid {
+            grid-template-columns: 1.5fr 0.9fr;
+            align-items: start;
+            min-height: calc(100vh - 80px);
+        }
+
+        .dashboard-grid {
+            gap: 28px;
+        }
+
+        .main-grid {
+            grid-template-columns: 240px 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .hero,
+        .panel,
+        .table-card,
+        .form-card {
+            padding: 28px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(217, 119, 6, 0.4);
+            color: var(--warm);
+            background: rgba(255, 248, 235, 0.85);
+            font-size: 14px;
+        }
+
+        h1, h2, h3 {
+            margin: 0 0 12px;
+            line-height: 1.05;
+        }
+
+        h1 {
+            font-size: 64px;
+            letter-spacing: -0.04em;
+            margin-top: 20px;
+        }
+
+        h2 {
+            font-size: 34px;
+        }
+
+        h3 {
+            font-size: 24px;
+        }
+
+        p {
+            margin: 0 0 14px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .api-box,
+        .mini-user,
+        .list-box {
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.82);
+        }
+
+        .button,
+        button,
+        .button-link {
+            display: inline-block;
+            border: 0;
+            border-radius: 18px;
+            padding: 12px 18px;
+            font: inherit;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .button-warm {
+            background: var(--warm);
+            color: #fff;
+        }
+
+        .button-warm:hover {
+            background: var(--warm-dark);
+        }
+
+        .button-teal {
+            background: var(--teal);
+            color: #fff;
+        }
+
+        .button-teal:hover {
+            background: var(--teal-dark);
+        }
+
+        .button-light {
+            background: #fff;
+            color: var(--ink);
+            border: 1px solid var(--line);
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        form {
+            margin: 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--ink);
+        }
+
+        input {
+            width: 100%;
+            border: 1px solid #cfd8e4;
+            border-radius: 16px;
+            padding: 12px 14px;
+            font: inherit;
+            background: #fff;
+        }
+
+        .message {
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            margin-bottom: 18px;
+            background: rgba(255, 255, 255, 0.88);
+        }
+
+        .message.error {
+            border-color: #f0b8b8;
+            color: #8f2d2d;
+            background: #fff5f5;
+        }
+
+        .message.success {
+            border-color: #b7e2d5;
+            color: #16654f;
+            background: #f2fffb;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .resource-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .resource-links a {
+            display: block;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .resource-links a.active {
+            border-color: rgba(217, 119, 6, 0.45);
+            background: #fff6ea;
+            color: var(--warm-dark);
+            font-weight: 700;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+            background: #fff;
+            overflow: hidden;
+            border-radius: 18px;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e6ecf3;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .actions a {
+            color: var(--teal-dark);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .inline-form {
+            display: inline;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 920px) {
+            .landing-grid,
+            .main-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 44px;
+            }
+
+            .topbar,
+            .section-title {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
 </head>
 <body>
 @if (!$user)
-    <h1>clientSchool Frontend</h1>
-    <p>Client Laravel connectat a l’API REST de students, teachers i subjects.</p>
-    <p>API configurada a: <strong>{{ $apiBaseUrl }}</strong></p>
+    <div class="page">
+        <div class="landing-grid">
+            <section class="hero">
+                <span class="eyebrow">DAW M0613 · Client Laravel</span>
+                <h1>clientSchool Frontend</h1>
+                <p>Client Laravel connectat a la teva API REST de students, teachers i subjects.</p>
+                <p>Per aquesta part tens un accés bàsic i un dashboard per crear, editar i eliminar registres.</p>
+                <div class="api-box">
+                    API configurada a <strong>{{ $apiBaseUrl }}</strong>
+                </div>
+            </section>
 
-    @if ($errors->any())
-        <p><strong>Error:</strong> {{ $errors->first() }}</p>
-    @endif
+            <aside class="panel">
+                <h2>Iniciar sessió</h2>
 
-    <h2>Iniciar sessió</h2>
-    <form method="POST" action="{{ route('auth.login') }}">
-        @csrf
-        <p>
-            <label>Email</label><br>
-            <input name="email" type="email" value="{{ old('email') }}">
-        </p>
-        <p>
-            <label>Contrasenya</label><br>
-            <input name="password" type="password">
-        </p>
-        <button type="submit">Iniciar sessió</button>
-    </form>
+                @if ($errors->any())
+                    <div class="message error">{{ $errors->first() }}</div>
+                @endif
 
-    <h2>Crear usuari</h2>
-    <form method="POST" action="{{ route('auth.register') }}">
-        @csrf
-        <p>
-            <label>Nom</label><br>
-            <input name="name" type="text">
-        </p>
-        <p>
-            <label>Email</label><br>
-            <input name="email" type="email">
-        </p>
-        <p>
-            <label>Contrasenya</label><br>
-            <input name="password" type="password">
-        </p>
-        <button type="submit">Crear usuari i entrar</button>
-    </form>
+                <form method="POST" action="{{ route('auth.login') }}" class="stack">
+                    @csrf
+                    <div>
+                        <label>Email</label>
+                        <input name="email" type="email" value="{{ old('email') }}">
+                    </div>
+                    <div>
+                        <label>Contrasenya</label>
+                        <input name="password" type="password">
+                    </div>
+                    <button type="submit" class="button button-warm">Iniciar sessió</button>
+                </form>
+
+                <h3 style="margin-top: 28px;">Crear usuari</h3>
+                <form method="POST" action="{{ route('auth.register') }}" class="stack">
+                    @csrf
+                    <div>
+                        <label>Nom</label>
+                        <input name="name" type="text">
+                    </div>
+                    <div>
+                        <label>Email</label>
+                        <input name="email" type="email">
+                    </div>
+                    <div>
+                        <label>Contrasenya</label>
+                        <input name="password" type="password">
+                    </div>
+                    <button type="submit" class="button button-teal">Crear usuari i entrar</button>
+                </form>
+            </aside>
+        </div>
+    </div>
 @else
-    <h1>Dashboard</h1>
-    <p>Usuari: <strong>{{ $user->name }}</strong> ({{ $user->email }})</p>
-    <p>API: <strong>{{ $apiBaseUrl }}</strong></p>
-
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit">Sortir</button>
-    </form>
-
-    @if (session('success'))
-        <p><strong>{{ session('success') }}</strong></p>
-    @endif
-
-    @if (session('error'))
-        <p><strong>{{ session('error') }}</strong></p>
-    @endif
-
-    @if (($resources[$resource]['error'] ?? null) !== null)
-        <p><strong>{{ $resources[$resource]['error'] }}</strong></p>
-    @endif
-
-    <h2>Recursos</h2>
-    <ul>
-        @foreach (['students', 'teachers', 'subjects'] as $resourceName)
-            <li>
-                <a href="{{ route('app.dashboard', ['resource' => $resourceName]) }}">{{ ucfirst($resourceName) }}</a>
-                ({{ count($resources[$resourceName]['rows']) }})
-            </li>
-        @endforeach
-    </ul>
-
-    <h2>{{ ucfirst($resource) }}</h2>
-
-    <table border="1" cellpadding="6" cellspacing="0">
-        <thead>
-            <tr>
-                @foreach ($fields as $field)
-                    <th>{{ $field }}</th>
-                @endforeach
-                <th>Accions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($resources[$resource]['rows'] as $row)
-                <tr>
-                    @foreach ($fields as $field)
-                        <td>{{ $row[$field] ?? '' }}</td>
-                    @endforeach
-                    <td>
-                        <a href="{{ route('app.dashboard', ['resource' => $resource, 'edit' => $row['id']]) }}">Editar</a>
-                        <form method="POST" action="{{ route('resources.destroy', ['resource' => $resource, 'id' => $row['id']]) }}" style="display:inline;">
+    <div class="page">
+        <div class="dashboard-grid">
+            <section class="hero">
+                <div class="topbar">
+                    <div>
+                        <span class="eyebrow">ClientSchool</span>
+                        <h1 style="font-size: 52px; margin-top: 16px;">Dashboard</h1>
+                        <p>Gestiona els recursos del backend i comprova al moment que queden guardats.</p>
+                    </div>
+                    <div class="stack" style="min-width: 240px;">
+                        <div class="mini-user">
+                            <strong>{{ $user->name }}</strong><br>
+                            {{ $user->email }}
+                        </div>
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit">Eliminar</button>
+                            <button type="submit" class="button button-light">Sortir</button>
                         </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="{{ count($fields) + 1 }}">No hi ha registres.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+                    </div>
+                </div>
+                <div class="api-box">API connectada a <strong>{{ $apiBaseUrl }}</strong></div>
+            </section>
 
-    <h2>{{ $editing ? 'Editar registre' : 'Nou registre' }}</h2>
-    <form method="POST" action="{{ $editing
-        ? route('resources.update', ['resource' => $resource, 'id' => $editing['id']])
-        : route('resources.store', ['resource' => $resource]) }}">
-        @csrf
-        @foreach ($fields as $field)
-            <p>
-                <label>{{ $field }}</label><br>
-                <input
-                    name="{{ $field }}"
-                    type="text"
-                    value="{{ old($field, $editing[$field] ?? '') }}"
-                >
-            </p>
-        @endforeach
-        <button type="submit">{{ $editing ? 'Guardar canvis' : 'Crear registre' }}</button>
-    </form>
+            @if (session('success'))
+                <div class="message success">{{ session('success') }}</div>
+            @endif
 
-    @if ($editing)
-        <p><a href="{{ route('app.dashboard', ['resource' => $resource]) }}">Cancel·lar edició</a></p>
-    @endif
+            @if (session('error'))
+                <div class="message error">{{ session('error') }}</div>
+            @endif
+
+            @if (($resources[$resource]['error'] ?? null) !== null)
+                <div class="message error">{{ $resources[$resource]['error'] }}</div>
+            @endif
+
+            <div class="stats-grid">
+                @foreach (['students', 'teachers', 'subjects'] as $resourceName)
+                    <div class="card" style="padding: 24px;">
+                        <p style="margin-bottom: 8px;">{{ ucfirst($resourceName) }}</p>
+                        <div class="stat-number">{{ count($resources[$resourceName]['rows']) }}</div>
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="main-grid">
+                <aside class="panel">
+                    <h3>Recursos</h3>
+                    <ul class="resource-links">
+                        @foreach (['students', 'teachers', 'subjects'] as $resourceName)
+                            <li>
+                                <a
+                                    href="{{ route('app.dashboard', ['resource' => $resourceName]) }}"
+                                    class="{{ $resource === $resourceName ? 'active' : '' }}"
+                                >
+                                    {{ ucfirst($resourceName) }} ({{ count($resources[$resourceName]['rows']) }})
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </aside>
+
+                <div class="dashboard-grid" style="gap: 24px;">
+                    <section class="table-card">
+                        <div class="section-title">
+                            <div>
+                                <p style="margin-bottom: 4px;">Recurs actiu</p>
+                                <h2>{{ ucfirst($resource) }}</h2>
+                            </div>
+                            <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-teal">Nou registre</a>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    @foreach ($fields as $field)
+                                        <th>{{ $field }}</th>
+                                    @endforeach
+                                    <th>Accions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($resources[$resource]['rows'] as $row)
+                                    <tr>
+                                        @foreach ($fields as $field)
+                                            <td>{{ $row[$field] ?? '' }}</td>
+                                        @endforeach
+                                        <td>
+                                            <div class="actions">
+                                                <a href="{{ route('app.dashboard', ['resource' => $resource, 'edit' => $row['id']]) }}">Editar</a>
+                                                <form method="POST" action="{{ route('resources.destroy', ['resource' => $resource, 'id' => $row['id']]) }}" class="inline-form">
+                                                    @csrf
+                                                    <button type="submit" class="button button-light">Eliminar</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="{{ count($fields) + 1 }}">No hi ha registres.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section class="form-card">
+                        <div class="section-title">
+                            <div>
+                                <p style="margin-bottom: 4px;">Editor</p>
+                                <h3>{{ $editing ? 'Editar registre' : 'Nou registre' }}</h3>
+                            </div>
+                            @if ($editing)
+                                <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-light">Cancel·lar</a>
+                            @endif
+                        </div>
+
+                        <form method="POST" action="{{ $editing
+                            ? route('resources.update', ['resource' => $resource, 'id' => $editing['id']])
+                            : route('resources.store', ['resource' => $resource]) }}" class="stack">
+                            @csrf
+                            @foreach ($fields as $field)
+                                <div>
+                                    <label>{{ ucfirst($field) }}</label>
+                                    <input
+                                        name="{{ $field }}"
+                                        type="text"
+                                        value="{{ old($field, $editing[$field] ?? '') }}"
+                                    >
+                                </div>
+                            @endforeach
+                            <button type="submit" class="button {{ $editing ? 'button-teal' : 'button-warm' }}">
+                                {{ $editing ? 'Guardar canvis' : 'Crear registre' }}
+                            </button>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
 @endif
 </body>
 </html>
