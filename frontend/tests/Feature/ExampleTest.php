@@ -17,6 +17,7 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('ClientSchool Frontend');
+        $response->assertSee('Iniciar sessió');
     }
 
     public function test_authenticated_user_can_open_dashboard(): void
@@ -29,10 +30,22 @@ class ExampleTest extends TestCase
         $response->assertSee('Panell del client SPA');
     }
 
+    public function test_user_can_register_and_enter_dashboard(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Maria',
+            'email' => 'maria@example.com',
+            'password' => '1234',
+        ]);
+
+        $response->assertRedirect('/app');
+        $this->assertDatabaseHas('users', ['email' => 'maria@example.com']);
+    }
+
     public function test_proxy_returns_students_from_backend_api(): void
     {
         Http::fake([
-            'http://127.0.0.1:8000/api/students' => Http::response([
+            'http://127.0.0.1:8001/api/students' => Http::response([
                 'status' => 200,
                 'data' => [
                     ['id' => '1', 'name' => 'Ada Lovelace', 'email' => 'ada@example.com'],
@@ -51,7 +64,7 @@ class ExampleTest extends TestCase
     public function test_proxy_creates_teacher_in_backend_api(): void
     {
         Http::fake([
-            'http://127.0.0.1:8000/api/teachers' => Http::response([
+            'http://127.0.0.1:8001/api/teachers' => Http::response([
                 'status' => 201,
                 'data' => [
                     'id' => '99',

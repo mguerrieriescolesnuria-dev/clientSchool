@@ -7,7 +7,7 @@
 ## Què s'ha afegit
 
 - Carpeta `frontend/` amb una aplicació Laravel separada
-- Autenticació OAuth amb GitHub via `laravel/socialite`
+- Autenticació bàsica amb usuari i contrasenya
 - Client SPA per consumir `students`, `teachers` i `subjects`
 - Proxy Laravel cap al backend existent
 - Tests funcionals del client
@@ -25,17 +25,14 @@ docs/
 ## Variables necessàries al frontend
 
 ```env
-SCHOOL_API_BASE_URL=http://127.0.0.1:8000
-GITHUB_CLIENT_ID=...
-GITHUB_CLIENT_SECRET=...
-GITHUB_REDIRECT_URI=http://127.0.0.1:8080/auth/github/callback
+SCHOOL_API_BASE_URL=http://127.0.0.1:8001
 ```
 
 ## Posada en marxa
 
 ```bash
 composer install
-php -S 127.0.0.1:8000 -t public router.php
+php -S 127.0.0.1:8001 -t public router.php
 
 cd frontend
 cp .env.example .env
@@ -57,4 +54,4 @@ php artisan test
 ## Notes
 
 - La Part 1 no s'ha modificat funcionalment
-- Cal crear l'aplicació OAuth de GitHub abans de provar el login real
+- El client d'aquesta entrega usa login bàsic i dashboard CRUD

@@ -6,8 +6,8 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'landing'])->name('login');
-Route::get('/auth/github/redirect', [AuthController::class, 'redirect'])->name('oauth.github.redirect');
-Route::get('/auth/github/callback', [AuthController::class, 'callback'])->name('oauth.github.callback');
+Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/app', [DashboardController::class, 'index'])->name('app.dashboard');

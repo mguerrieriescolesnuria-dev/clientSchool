@@ -30,26 +30,58 @@
                         </h1>
                         <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
                             Client SPA amb Laravel que es connecta a la teva API REST de students, teachers i subjects.
-                            L'accés queda protegit amb OAuth de GitHub.
+                            Per a aquesta part del projecte tens accés bàsic amb usuari i contrasenya, i un dashboard per gestionar dades.
                         </p>
-                        <div class="mt-8 flex flex-col gap-4 sm:flex-row">
-                            <a href="{{ route('oauth.github.redirect') }}" class="inline-flex items-center justify-center rounded-2xl bg-amber-600 px-6 py-3 font-semibold text-white transition hover:bg-amber-700">
-                                Entrar amb GitHub
-                            </a>
-                            <div class="rounded-2xl border border-slate-200 bg-white/80 px-6 py-3 text-sm text-slate-600">
-                                API configurada a <code>{{ $apiBaseUrl }}</code>
-                            </div>
+                        <div class="mt-8 rounded-2xl border border-slate-200 bg-white/80 px-6 py-4 text-sm text-slate-600">
+                            API configurada a <code>{{ $apiBaseUrl }}</code>
                         </div>
                     </div>
 
                     <aside class="fade-up glass-panel rounded-[2rem] border border-white/60 p-8">
-                        <h2 class="text-lg font-semibold text-slate-900">Què inclou</h2>
-                        <ul class="mt-6 space-y-4 text-slate-600">
-                            <li class="rounded-2xl border border-slate-200/70 bg-white/70 p-4">OAuth amb GitHub via Socialite</li>
-                            <li class="rounded-2xl border border-slate-200/70 bg-white/70 p-4">CRUD de students, teachers i subjects</li>
-                            <li class="rounded-2xl border border-slate-200/70 bg-white/70 p-4">Proxy Laravel cap al backend existent</li>
-                            <li class="rounded-2xl border border-slate-200/70 bg-white/70 p-4">SPA simple amb JavaScript natiu</li>
-                        </ul>
+                        <h2 class="text-lg font-semibold text-slate-900">Iniciar sessió</h2>
+
+                        @if ($errors->any())
+                            <div class="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                                {{ $errors->first() }}
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('auth.login') }}" class="mt-6 space-y-4">
+                            @csrf
+                            <label class="block">
+                                <span class="mb-2 block text-sm font-medium text-slate-600">Email</span>
+                                <input name="email" type="email" value="{{ old('email') }}" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-amber-500">
+                            </label>
+                            <label class="block">
+                                <span class="mb-2 block text-sm font-medium text-slate-600">Contrasenya</span>
+                                <input name="password" type="password" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-amber-500">
+                            </label>
+                            <button type="submit" class="w-full rounded-2xl bg-amber-600 px-4 py-3 font-semibold text-white transition hover:bg-amber-700">
+                                Iniciar sessió
+                            </button>
+                        </form>
+
+                        <div class="mt-6 border-t border-slate-200 pt-6">
+                            <h3 class="text-base font-semibold text-slate-900">Crear usuari</h3>
+                            <form method="POST" action="{{ route('auth.register') }}" class="mt-4 space-y-4">
+                                @csrf
+                                <label class="block">
+                                    <span class="mb-2 block text-sm font-medium text-slate-600">Nom</span>
+                                    <input name="name" type="text" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-teal-500">
+                                </label>
+                                <label class="block">
+                                    <span class="mb-2 block text-sm font-medium text-slate-600">Email</span>
+                                    <input name="email" type="email" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-teal-500">
+                                </label>
+                                <label class="block">
+                                    <span class="mb-2 block text-sm font-medium text-slate-600">Contrasenya</span>
+                                    <input name="password" type="password" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-teal-500">
+                                </label>
+                                <button type="submit" class="w-full rounded-2xl bg-teal-700 px-4 py-3 font-semibold text-white transition hover:bg-teal-800">
+                                    Crear usuari i entrar
+                                </button>
+                            </form>
+                        </div>
                     </aside>
                 </section>
             </main>
