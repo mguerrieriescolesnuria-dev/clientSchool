@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>clientSchool Frontend</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,700" rel="stylesheet" />
     <style>
         :root {
             --ink: #172033;
@@ -26,7 +28,7 @@
         body {
             margin: 0;
             color: var(--ink);
-            font-family: Georgia, "Times New Roman", serif;
+            font-family: "Space Grotesk", sans-serif;
             background:
                 radial-gradient(circle at top left, rgba(217, 119, 6, 0.18), transparent 28%),
                 radial-gradient(circle at top right, rgba(15, 118, 110, 0.15), transparent 30%),
@@ -34,9 +36,9 @@
         }
 
         .page {
-            max-width: 1200px;
+            max-width: 1180px;
             margin: 0 auto;
-            padding: 32px 20px 48px;
+            padding: 28px 20px 40px;
         }
 
         .hero,
@@ -61,16 +63,16 @@
 
         .landing-grid {
             grid-template-columns: 1.5fr 0.9fr;
-            align-items: start;
-            min-height: calc(100vh - 80px);
+            align-items: center;
+            min-height: calc(100vh - 56px);
         }
 
         .dashboard-grid {
-            gap: 28px;
+            gap: 24px;
         }
 
         .main-grid {
-            grid-template-columns: 240px 1fr;
+            grid-template-columns: 230px 1fr;
         }
 
         .stats-grid {
@@ -81,50 +83,52 @@
         .panel,
         .table-card,
         .form-card {
-            padding: 28px;
+            padding: 26px;
         }
 
         .eyebrow {
             display: inline-block;
-            padding: 10px 16px;
+            padding: 9px 15px;
             border-radius: 999px;
             border: 1px solid rgba(217, 119, 6, 0.4);
             color: var(--warm);
             background: rgba(255, 248, 235, 0.85);
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         h1, h2, h3 {
-            margin: 0 0 12px;
+            margin: 0 0 10px;
             line-height: 1.05;
         }
 
         h1 {
-            font-size: 64px;
+            font-size: 42px;
             letter-spacing: -0.04em;
-            margin-top: 20px;
+            margin-top: 18px;
         }
 
         h2 {
-            font-size: 34px;
+            font-size: 28px;
         }
 
         h3 {
-            font-size: 24px;
+            font-size: 20px;
         }
 
         p {
-            margin: 0 0 14px;
+            margin: 0 0 12px;
             color: var(--muted);
-            line-height: 1.7;
+            line-height: 1.65;
+            font-size: 15px;
         }
 
         .api-box,
         .mini-user,
         .list-box {
             border: 1px solid var(--line);
-            border-radius: 20px;
-            padding: 16px 18px;
+            border-radius: 18px;
+            padding: 14px 16px;
             background: rgba(255, 255, 255, 0.82);
         }
 
@@ -133,9 +137,11 @@
         .button-link {
             display: inline-block;
             border: 0;
-            border-radius: 18px;
-            padding: 12px 18px;
+            border-radius: 16px;
+            padding: 11px 16px;
             font: inherit;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             text-decoration: none;
         }
@@ -167,7 +173,7 @@
         .stack {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
         }
 
         form {
@@ -176,26 +182,29 @@
 
         label {
             display: block;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 6px;
             color: var(--ink);
+            font-size: 14px;
         }
 
         input {
             width: 100%;
             border: 1px solid #cfd8e4;
-            border-radius: 16px;
-            padding: 12px 14px;
+            border-radius: 14px;
+            padding: 11px 13px;
             font: inherit;
+            font-size: 15px;
             background: #fff;
         }
 
         .message {
-            padding: 14px 16px;
-            border-radius: 18px;
+            padding: 13px 15px;
+            border-radius: 16px;
             border: 1px solid var(--line);
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             background: rgba(255, 255, 255, 0.88);
+            font-size: 14px;
         }
 
         .message.error {
@@ -214,8 +223,8 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 20px;
-            margin-bottom: 10px;
+            gap: 18px;
+            margin-bottom: 8px;
         }
 
         .resource-links {
@@ -224,17 +233,18 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 9px;
         }
 
         .resource-links a {
             display: block;
-            padding: 14px 16px;
-            border-radius: 18px;
+            padding: 13px 15px;
+            border-radius: 16px;
             border: 1px solid var(--line);
             background: #fff;
             color: var(--ink);
             text-decoration: none;
+            font-size: 14px;
         }
 
         .resource-links a.active {
@@ -245,7 +255,7 @@
         }
 
         .stat-number {
-            font-size: 42px;
+            font-size: 34px;
             font-weight: 700;
             color: var(--ink);
         }
@@ -253,30 +263,31 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 18px;
+            margin-top: 16px;
             background: #fff;
             overflow: hidden;
-            border-radius: 18px;
+            border-radius: 16px;
         }
 
         th,
         td {
-            padding: 14px 16px;
+            padding: 12px 14px;
             border-bottom: 1px solid #e6ecf3;
             text-align: left;
             vertical-align: top;
+            font-size: 14px;
         }
 
         th {
             color: var(--muted);
-            font-size: 14px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.08em;
         }
 
         .actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -285,6 +296,7 @@
             color: var(--teal-dark);
             text-decoration: none;
             font-weight: 700;
+            font-size: 14px;
         }
 
         .inline-form {
@@ -295,8 +307,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 14px;
+            gap: 14px;
+            margin-bottom: 12px;
         }
 
         @media (max-width: 920px) {
@@ -307,7 +319,7 @@
             }
 
             h1 {
-                font-size: 44px;
+                font-size: 34px;
             }
 
             .topbar,
@@ -379,7 +391,7 @@
                 <div class="topbar">
                     <div>
                         <span class="eyebrow">ClientSchool</span>
-                        <h1 style="font-size: 52px; margin-top: 16px;">Dashboard</h1>
+                        <h1 style="font-size: 38px; margin-top: 16px;">Dashboard</h1>
                         <p>Gestiona els recursos del backend i comprova al moment que queden guardats.</p>
                     </div>
                     <div class="stack" style="min-width: 240px;">
@@ -408,9 +420,9 @@
                 <div class="message error">{{ $resources[$resource]['error'] }}</div>
             @endif
 
-            <div class="stats-grid">
-                @foreach (['students', 'teachers', 'subjects'] as $resourceName)
-                    <div class="card" style="padding: 24px;">
+                    <div class="stats-grid">
+                        @foreach (['students', 'teachers', 'subjects'] as $resourceName)
+                    <div class="card" style="padding: 22px;">
                         <p style="margin-bottom: 8px;">{{ ucfirst($resourceName) }}</p>
                         <div class="stat-number">{{ count($resources[$resourceName]['rows']) }}</div>
                     </div>
