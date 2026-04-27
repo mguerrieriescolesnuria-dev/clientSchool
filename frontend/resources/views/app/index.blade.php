@@ -68,22 +68,24 @@
         }
 
         .dashboard-grid {
-            gap: 24px;
+            gap: 18px;
         }
 
         .main-grid {
-            grid-template-columns: 230px 1fr;
+            grid-template-columns: 170px 1fr;
+            align-items: start;
         }
 
         .stats-grid {
             grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
         }
 
         .hero,
         .panel,
         .table-card,
         .form-card {
-            padding: 26px;
+            padding: 22px;
         }
 
         .eyebrow {
@@ -233,18 +235,19 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 9px;
+            gap: 8px;
         }
 
         .resource-links a {
             display: block;
-            padding: 13px 15px;
+            padding: 10px 12px;
             border-radius: 16px;
             border: 1px solid var(--line);
             background: #fff;
             color: var(--ink);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 12px;
+            line-height: 1.2;
         }
 
         .resource-links a.active {
@@ -255,9 +258,14 @@
         }
 
         .stat-number {
-            font-size: 34px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--ink);
+        }
+
+        .card p {
+            font-size: 12px;
+            margin-bottom: 6px;
         }
 
         table {
@@ -309,6 +317,23 @@
             align-items: center;
             gap: 14px;
             margin-bottom: 12px;
+        }
+
+        .sidebar-panel {
+            padding: 16px 14px;
+        }
+
+        .sidebar-panel h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .table-card h2 {
+            font-size: 24px;
+        }
+
+        .form-card h3 {
+            font-size: 18px;
         }
 
         @media (max-width: 920px) {
@@ -422,7 +447,7 @@
 
                     <div class="stats-grid">
                         @foreach (['students', 'teachers', 'subjects'] as $resourceName)
-                    <div class="card" style="padding: 22px;">
+                    <div class="card" style="padding: 18px 20px;">
                         <p style="margin-bottom: 8px;">{{ ucfirst($resourceName) }}</p>
                         <div class="stat-number">{{ count($resources[$resourceName]['rows']) }}</div>
                     </div>
@@ -430,7 +455,7 @@
             </div>
 
             <div class="main-grid">
-                <aside class="panel">
+                <aside class="panel sidebar-panel">
                     <h3>Recursos</h3>
                     <ul class="resource-links">
                         @foreach (['students', 'teachers', 'subjects'] as $resourceName)
