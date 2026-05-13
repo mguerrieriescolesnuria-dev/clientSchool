@@ -62,7 +62,7 @@
         }
 
         .landing-grid {
-            grid-template-columns: 1.5fr 0.9fr;
+            grid-template-columns: 1.35fr 0.95fr;
             align-items: center;
             min-height: calc(100vh - 56px);
         }
@@ -170,6 +170,30 @@
             background: #fff;
             color: var(--ink);
             border: 1px solid var(--line);
+        }
+
+        .button-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+            color: var(--ink);
+            border: 1px solid rgba(95, 111, 137, 0.2);
+            box-shadow: 0 14px 30px rgba(30, 41, 59, 0.08);
+        }
+
+        .button-google:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 18px 36px rgba(30, 41, 59, 0.12);
+        }
+
+        .button-google svg {
+            width: 20px;
+            height: 20px;
+            flex: none;
         }
 
         .stack {
@@ -336,6 +360,71 @@
             font-size: 18px;
         }
 
+        .oauth-panel {
+            padding: 28px;
+        }
+
+        .oauth-panel h2 {
+            font-size: 34px;
+            letter-spacing: -0.04em;
+            margin-bottom: 12px;
+        }
+
+        .oauth-panel p {
+            margin-bottom: 0;
+        }
+
+        .oauth-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 12px;
+        }
+
+        .oauth-list li {
+            padding: 14px 16px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .oauth-list strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--ink);
+            font-size: 15px;
+        }
+
+        .oauth-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.08);
+            color: var(--teal-dark);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .oauth-badge::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #10b981;
+        }
+
+        .oauth-note {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
         @media (max-width: 920px) {
             .landing-grid,
             .main-grid,
@@ -369,47 +458,44 @@
                 </div>
             </section>
 
-            <aside class="panel">
-                <h2>Iniciar sessió</h2>
+            <aside class="panel oauth-panel">
+                <span class="oauth-badge">OAuth amb Google actiu</span>
+                <h2>Entra al client amb el teu compte de Google</h2>
 
                 @if ($errors->any())
                     <div class="message error">{{ $errors->first() }}</div>
                 @endif
 
-                <form method="POST" action="{{ route('auth.login') }}" class="stack">
-                    @csrf
-                    <div>
-                        <label>Email</label>
-                        <input name="email" type="email" value="{{ old('email') }}">
-                    </div>
-                    <div>
-                        <label>Contrasenya</label>
-                        <input name="password" type="password">
-                    </div>
-                    <button type="submit" class="button button-warm">Iniciar sessió</button>
-                </form>
+                <p>El login bàsic ja no es mostra a la portada. Ara l’entrada principal es fa amb Google perquè el dashboard pugui usar directament l’API protegida.</p>
 
-                <div style="margin-top: 18px;">
-                    <a href="{{ route('auth.google') }}" class="button button-teal" style="width: 100%; text-align: center;">Entrar amb Google</a>
+                <div style="margin: 22px 0 18px;">
+                    <a href="{{ route('auth.google') }}" class="button button-google">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-.8 2.4-1.8 3.2l2.9 2.2c1.7-1.5 2.6-3.9 2.6-6.6 0-.6-.1-1.2-.2-1.7H12z"/>
+                            <path fill="#34A853" d="M12 21c2.4 0 4.4-.8 5.9-2.2l-2.9-2.2c-.8.6-1.8 1-3 1-2.3 0-4.2-1.5-4.9-3.6l-3 .2v2.3C5.7 19.3 8.6 21 12 21z"/>
+                            <path fill="#4A90E2" d="M7.1 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.7l-3-.2C3.4 8.9 3 10.4 3 12s.4 3.1 1.1 4.5l3-.5V14z"/>
+                            <path fill="#FBBC05" d="M12 6.4c1.3 0 2.5.4 3.5 1.3l2.6-2.6C16.4 3.7 14.4 3 12 3 8.6 3 5.7 4.7 4.1 7.5l3 2.3c.7-2.1 2.6-3.4 4.9-3.4z"/>
+                        </svg>
+                        Entrar amb Google
+                    </a>
                 </div>
 
-                <h3 style="margin-top: 28px;">Crear usuari</h3>
-                <form method="POST" action="{{ route('auth.register') }}" class="stack">
-                    @csrf
-                    <div>
-                        <label>Nom</label>
-                        <input name="name" type="text">
-                    </div>
-                    <div>
-                        <label>Email</label>
-                        <input name="email" type="email">
-                    </div>
-                    <div>
-                        <label>Contrasenya</label>
-                        <input name="password" type="password">
-                    </div>
-                    <button type="submit" class="button button-teal">Crear usuari i entrar</button>
-                </form>
+                <ul class="oauth-list">
+                    <li>
+                        <strong>Accés directe al dashboard</strong>
+                        Quan Google valida la sessió, el client rep el token de l’API i entra al dashboard automàticament.
+                    </li>
+                    <li>
+                        <strong>CRUD protegit</strong>
+                        Els formularis de students, teachers i subjects ja queden autoritzats per crear, editar i eliminar.
+                    </li>
+                    <li>
+                        <strong>Sessió més clara</strong>
+                        Tot queda unificat: entres una vegada i ja treballes amb el client i el backend alhora.
+                    </li>
+                </ul>
+
+                <p class="oauth-note">Si Google mostra un avís de prova, és normal en entorn local mentre el projecte està en mode de desenvolupament.</p>
             </aside>
         </div>
     </div>

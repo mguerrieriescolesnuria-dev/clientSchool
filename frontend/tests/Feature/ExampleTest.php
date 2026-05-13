@@ -17,8 +17,8 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('clientSchool Frontend');
-        $response->assertSee('Iniciar sessió');
         $response->assertSee('Entrar amb Google');
+        $response->assertDontSee('Crear usuari');
     }
 
     public function test_authenticated_user_can_open_dashboard(): void
