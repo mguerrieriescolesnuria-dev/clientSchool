@@ -38,6 +38,7 @@ class DashboardController extends Controller
 
         $editingId = (string) $request->query('edit', '');
         $editing = null;
+        $showEditor = $request->boolean('create') || $editingId !== '';
 
         foreach ($resources[$resource]['rows'] as $row) {
             if (($row['id'] ?? null) === $editingId) {
@@ -53,6 +54,7 @@ class DashboardController extends Controller
             'resources' => $resources,
             'fields' => SchoolApi::fieldsFor($resource),
             'editing' => $editing,
+            'showEditor' => $showEditor,
             'hasApiToken' => $request->session()->has('api_token'),
         ]);
     }

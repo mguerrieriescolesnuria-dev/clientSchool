@@ -245,27 +245,8 @@
             background: #f2fffb;
         }
 
-        .message.is-temporary {
-            animation: fade-away 4.8s ease forwards;
-        }
-
-        @keyframes fade-away {
-            0%, 70% {
-                opacity: 1;
-                transform: translateY(0);
-                max-height: 120px;
-                margin-bottom: 16px;
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateY(-8px);
-                max-height: 0;
-                margin-bottom: 0;
-                padding-top: 0;
-                padding-bottom: 0;
-                border-width: 0;
-            }
+        .message.is-hidden {
+            display: none;
         }
 
         .topbar {
@@ -609,7 +590,7 @@
                                 <h2>{{ ucfirst($resource) }}</h2>
                             </div>
                             @if ($hasApiToken)
-                                <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-teal" data-spa-link>Nou registre</a>
+                                <a href="{{ route('app.dashboard', ['resource' => $resource, 'create' => 1]) }}" class="button button-teal" data-spa-link>Nou registre</a>
                             @endif
                         </div>
 
@@ -651,7 +632,7 @@
                         </table>
                     </section>
 
-                    @if ($hasApiToken)
+                    @if ($hasApiToken && $showEditor)
                     <section class="form-card">
                         <div class="section-title">
                             <div>
@@ -660,6 +641,8 @@
                             </div>
                             @if ($editing)
                                 <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-light" data-spa-link>Cancel·lar</a>
+                            @else
+                                <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-light" data-spa-link>Tancar</a>
                             @endif
                         </div>
 
@@ -697,7 +680,7 @@
         const hideTemporaryMessages = (scope = document) => {
             scope.querySelectorAll('.message.is-temporary').forEach((element) => {
                 window.setTimeout(() => {
-                    element.style.display = 'none';
+                    element.classList.add('is-hidden');
                 }, 5000);
             });
         };
@@ -721,7 +704,6 @@
             }
 
             hideTemporaryMessages(nextShell);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         const loadPage = async (url, options = {}, pushState = true) => {
