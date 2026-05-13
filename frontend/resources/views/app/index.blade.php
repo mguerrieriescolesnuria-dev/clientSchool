@@ -245,6 +245,29 @@
             background: #f2fffb;
         }
 
+        .message.is-temporary {
+            animation: fade-away 4.8s ease forwards;
+        }
+
+        @keyframes fade-away {
+            0%, 70% {
+                opacity: 1;
+                transform: translateY(0);
+                max-height: 120px;
+                margin-bottom: 16px;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-8px);
+                max-height: 0;
+                margin-bottom: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                border-width: 0;
+            }
+        }
+
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -425,6 +448,15 @@
             margin-top: 8px;
         }
 
+        .page.is-loading {
+            opacity: 0.72;
+            transition: opacity 0.18s ease;
+        }
+
+        .page-shell {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
         @media (max-width: 920px) {
             .landing-grid,
             .main-grid,
@@ -500,7 +532,7 @@
         </div>
     </div>
 @else
-    <div class="page">
+    <div class="page page-shell" data-dashboard-shell>
         <div class="dashboard-grid">
             <section class="hero">
                 <div class="topbar">
@@ -524,7 +556,7 @@
             </section>
 
             @if (session('success'))
-                <div class="message success">{{ session('success') }}</div>
+                <div class="message success is-temporary">{{ session('success') }}</div>
             @endif
 
             @if (session('error'))
@@ -560,6 +592,7 @@
                                 <a
                                     href="{{ route('app.dashboard', ['resource' => $resourceName]) }}"
                                     class="{{ $resource === $resourceName ? 'active' : '' }}"
+                                    data-spa-link
                                 >
                                     {{ ucfirst($resourceName) }} ({{ count($resources[$resourceName]['rows']) }})
                                 </a>
@@ -576,7 +609,7 @@
                                 <h2>{{ ucfirst($resource) }}</h2>
                             </div>
                             @if ($hasApiToken)
-                                <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-teal">Nou registre</a>
+                                <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-teal" data-spa-link>Nou registre</a>
                             @endif
                         </div>
 
@@ -598,8 +631,8 @@
                                         <td>
                                             <div class="actions">
                                                 @if ($hasApiToken)
-                                                    <a href="{{ route('app.dashboard', ['resource' => $resource, 'edit' => $row['id']]) }}">Editar</a>
-                                                    <form method="POST" action="{{ route('resources.destroy', ['resource' => $resource, 'id' => $row['id']]) }}" class="inline-form">
+                                                    <a href="{{ route('app.dashboard', ['resource' => $resource, 'edit' => $row['id']]) }}" data-spa-link>Editar</a>
+                                                    <form method="POST" action="{{ route('resources.destroy', ['resource' => $resource, 'id' => $row['id']]) }}" class="inline-form" data-spa-form>
                                                         @csrf
                                                         <button type="submit" class="button button-light">Eliminar</button>
                                                     </form>
@@ -626,13 +659,13 @@
                                 <h3>{{ $editing ? 'Editar registre' : 'Nou registre' }}</h3>
                             </div>
                             @if ($editing)
-                                <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-light">Cancel·lar</a>
+                                <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-light" data-spa-link>Cancel·lar</a>
                             @endif
                         </div>
 
                         <form method="POST" action="{{ $editing
                             ? route('resources.update', ['resource' => $resource, 'id' => $editing['id']])
-                            : route('resources.store', ['resource' => $resource]) }}" class="stack">
+                            : route('resources.store', ['resource' => $resource]) }}" class="stack" data-spa-form>
                             @csrf
                             @foreach ($fields as $field)
                                 <div>
@@ -655,5 +688,121 @@
         </div>
     </div>
 @endif
+<script>
+    (() => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+        const getShell = () => document.querySelector('[data-dashboard-shell]');
+
+        const hideTemporaryMessages = (scope = document) => {
+            scope.querySelectorAll('.message.is-temporary').forEach((element) => {
+                window.setTimeout(() => {
+                    element.style.display = 'none';
+                }, 5000);
+            });
+        };
+
+        const replaceShell = (html, url, pushState = true) => {
+            const parser = new DOMParser();
+            const nextDocument = parser.parseFromString(html, 'text/html');
+            const currentShell = getShell();
+            const nextShell = nextDocument.querySelector('[data-dashboard-shell]');
+
+            if (!currentShell || !nextShell) {
+                window.location.assign(url);
+                return;
+            }
+
+            currentShell.replaceWith(nextShell);
+            document.title = nextDocument.title || document.title;
+
+            if (pushState) {
+                window.history.pushState({}, '', url);
+            }
+
+            hideTemporaryMessages(nextShell);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        const loadPage = async (url, options = {}, pushState = true) => {
+            const shell = getShell();
+
+            if (!shell) {
+                window.location.assign(url);
+                return;
+            }
+
+            shell.classList.add('is-loading');
+
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        ...(options.headers ?? {}),
+                    },
+                    credentials: 'same-origin',
+                    method: options.method ?? 'GET',
+                    body: options.body ?? undefined,
+                });
+
+                const html = await response.text();
+
+                if (!response.ok) {
+                    window.location.assign(url);
+                    return;
+                }
+
+                replaceShell(html, url, pushState);
+            } catch (error) {
+                window.location.assign(url);
+            } finally {
+                const activeShell = getShell();
+                if (activeShell) {
+                    activeShell.classList.remove('is-loading');
+                }
+            }
+        };
+
+        document.addEventListener('click', (event) => {
+            const link = event.target.closest('[data-spa-link]');
+
+            if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                return;
+            }
+
+            event.preventDefault();
+            loadPage(link.href);
+        });
+
+        document.addEventListener('submit', (event) => {
+            const form = event.target.closest('[data-spa-form]');
+
+            if (!form) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            if (csrfToken && !formData.has('_token')) {
+                formData.append('_token', csrfToken);
+            }
+
+            loadPage(form.action, {
+                method: form.method || 'POST',
+                body: formData,
+            });
+        });
+
+        window.addEventListener('popstate', () => {
+            if (getShell()) {
+                loadPage(window.location.href, {}, false);
+            }
+        });
+
+        hideTemporaryMessages();
+    })();
+</script>
 </body>
 </html>
