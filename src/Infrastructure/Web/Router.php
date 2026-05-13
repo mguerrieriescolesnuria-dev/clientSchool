@@ -8,24 +8,32 @@ class Router
 {
     private static array $routes = [];
 
-    public static function get(string $path, callable|array $handler): void
+    public static function get(string $path, callable|array $handler, array $middleware = []): void
     {
-        self::$routes['GET'][$path] = $handler;
+        self::register('GET', $path, $handler, $middleware);
     }
 
-    public static function post(string $path, callable|array $handler): void
+    public static function post(string $path, callable|array $handler, array $middleware = []): void
     {
-        self::$routes['POST'][$path] = $handler;
+        self::register('POST', $path, $handler, $middleware);
     }
 
-    public static function put(string $path, callable|array $handler): void
+    public static function put(string $path, callable|array $handler, array $middleware = []): void
     {
-        self::$routes['PUT'][$path] = $handler;
+        self::register('PUT', $path, $handler, $middleware);
     }
 
-    public static function delete(string $path, callable|array $handler): void
+    public static function delete(string $path, callable|array $handler, array $middleware = []): void
     {
-        self::$routes['DELETE'][$path] = $handler;
+        self::register('DELETE', $path, $handler, $middleware);
+    }
+
+    private static function register(string $method, string $path, callable|array $handler, array $middleware): void
+    {
+        self::$routes[$method][$path] = [
+            'handler' => $handler,
+            'middleware' => $middleware,
+        ];
     }
 
     public static function route(string $method, string $uri): array|null
@@ -37,23 +45,21 @@ class Router
             $uri = '/';
         }
 
-        // Check exact match
         if (isset(self::$routes[$method][$uri])) {
             return [
-                'handler' => self::$routes[$method][$uri],
-                'params' => []
+                'handler' => self::$routes[$method][$uri]['handler'],
+                'params' => [],
+                'middleware' => self::$routes[$method][$uri]['middleware'],
             ];
         }
 
-        // Check pattern match (e.g., /api/teachers/{id})
         foreach (self::$routes[$method] ?? [] as $route => $handler) {
             $pattern = preg_replace('/\{[^}]+\}/', '([^/]+)', $route);
             $pattern = '/^' . str_replace('/', '\/', $pattern) . '$/';
 
             if (preg_match($pattern, $uri, $matches)) {
-                array_shift($matches); // Remove full match
+                array_shift($matches);
                 
-                // Extract parameter names
                 preg_match_all('/\{([^}]+)\}/', $route, $paramNames);
                 $params = [];
                 foreach ($paramNames[1] as $index => $name) {
@@ -61,8 +67,9 @@ class Router
                 }
 
                 return [
-                    'handler' => $handler,
-                    'params' => $params
+                    'handler' => $handler['handler'],
+                    'params' => $params,
+                    'middleware' => $handler['middleware'],
                 ];
             }
         }
@@ -81,7 +88,12 @@ class Router
             error_response('Route not found', 404);
         }
 
-        ['handler' => $handler, 'params' => $params] = $route;
+        ['handler' => $handler, 'params' => $params, 'middleware' => $middleware] = $route;
+
+        foreach ($middleware as $middlewareClass) {
+            $instance = new $middlewareClass();
+            $instance->handle();
+        }
 
         if (is_array($handler)) {
             [$class, $method] = $handler;

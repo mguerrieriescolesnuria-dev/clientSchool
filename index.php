@@ -17,11 +17,14 @@ if (file_exists(__DIR__ . '/.env')) {
     $dotenv->load();
 }
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
 // Set headers for CORS and API
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Content-Type: application/json');
 
 // Handle OPTIONS requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -30,28 +33,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 use App\Infrastructure\Web\Router;
+use App\Infrastructure\Web\AuthController;
 use App\Infrastructure\Web\TeacherController;
 use App\Infrastructure\Web\StudentController;
 use App\Infrastructure\Web\SubjectController;
+use App\Infrastructure\Web\Middleware\AuthMiddleware;
+
+Router::get('auth/google', [AuthController::class, 'redirectToGoogle']);
+Router::get('auth/callback', [AuthController::class, 'callback']);
+Router::get('auth/me', [AuthController::class, 'me'], [AuthMiddleware::class]);
 
 // Register routes
 Router::get('api/teachers', [TeacherController::class, 'index']);
 Router::get('api/teachers/{id}', [TeacherController::class, 'show']);
-Router::post('api/teachers', [TeacherController::class, 'store']);
-Router::put('api/teachers/{id}', [TeacherController::class, 'update']);
-Router::delete('api/teachers/{id}', [TeacherController::class, 'destroy']);
+Router::post('api/teachers', [TeacherController::class, 'store'], [AuthMiddleware::class]);
+Router::put('api/teachers/{id}', [TeacherController::class, 'update'], [AuthMiddleware::class]);
+Router::delete('api/teachers/{id}', [TeacherController::class, 'destroy'], [AuthMiddleware::class]);
 
 Router::get('api/students', [StudentController::class, 'index']);
 Router::get('api/students/{id}', [StudentController::class, 'show']);
-Router::post('api/students', [StudentController::class, 'store']);
-Router::put('api/students/{id}', [StudentController::class, 'update']);
-Router::delete('api/students/{id}', [StudentController::class, 'destroy']);
+Router::post('api/students', [StudentController::class, 'store'], [AuthMiddleware::class]);
+Router::put('api/students/{id}', [StudentController::class, 'update'], [AuthMiddleware::class]);
+Router::delete('api/students/{id}', [StudentController::class, 'destroy'], [AuthMiddleware::class]);
 
 Router::get('api/subjects', [SubjectController::class, 'index']);
 Router::get('api/subjects/{id}', [SubjectController::class, 'show']);
-Router::post('api/subjects', [SubjectController::class, 'store']);
-Router::put('api/subjects/{id}', [SubjectController::class, 'update']);
-Router::delete('api/subjects/{id}', [SubjectController::class, 'destroy']);
+Router::post('api/subjects', [SubjectController::class, 'store'], [AuthMiddleware::class]);
+Router::put('api/subjects/{id}', [SubjectController::class, 'update'], [AuthMiddleware::class]);
+Router::delete('api/subjects/{id}', [SubjectController::class, 'destroy'], [AuthMiddleware::class]);
 
 Router::get('api/health', fn() => json_response(['status' => 'OK'], 200));
 Router::get('/', fn() => json_response(['message' => 'clientSchool API v1.0'], 200));
