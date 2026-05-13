@@ -20,6 +20,7 @@ class DashboardController extends Controller
         return view('app.index', [
             'user' => null,
             'apiBaseUrl' => (string) config('school-api.base_url'),
+            'hasApiToken' => false,
         ]);
     }
 
@@ -52,6 +53,7 @@ class DashboardController extends Controller
             'resources' => $resources,
             'fields' => SchoolApi::fieldsFor($resource),
             'editing' => $editing,
+            'hasApiToken' => $request->session()->has('api_token'),
         ]);
     }
 

@@ -363,7 +363,7 @@
                 <span class="eyebrow">DAW M0613 · Client Laravel</span>
                 <h1>clientSchool Frontend</h1>
                 <p>He preparat aquest client Laravel perquè es connecti a la meva API REST de students, teachers i subjects.</p>
-                <p>En aquesta part del projecte he deixat un accés bàsic i un dashboard des d'on puc crear, editar i eliminar registres.</p>
+                <p>També he afegit accés amb Google OAuth perquè el client pugui treballar amb els endpoints protegits del backend.</p>
                 <div class="api-box">
                     API configurada a <strong>{{ $apiBaseUrl }}</strong>
                 </div>
@@ -388,6 +388,10 @@
                     </div>
                     <button type="submit" class="button button-warm">Iniciar sessió</button>
                 </form>
+
+                <div style="margin-top: 18px;">
+                    <a href="{{ route('auth.google') }}" class="button button-teal" style="width: 100%; text-align: center;">Entrar amb Google</a>
+                </div>
 
                 <h3 style="margin-top: 28px;">Crear usuari</h3>
                 <form method="POST" action="{{ route('auth.register') }}" class="stack">
@@ -441,6 +445,13 @@
                 <div class="message error">{{ session('error') }}</div>
             @endif
 
+            @if (!$hasApiToken)
+                <div class="message error">
+                    Has entrat amb login bàsic del client. Per crear, editar o eliminar registres al backend protegit, entra també amb Google OAuth.
+                    <a href="{{ route('auth.google') }}" style="font-weight: 700; color: inherit; margin-left: 6px;">Entrar amb Google</a>
+                </div>
+            @endif
+
             @if (($resources[$resource]['error'] ?? null) !== null)
                 <div class="message error">{{ $resources[$resource]['error'] }}</div>
             @endif
@@ -478,7 +489,9 @@
                                 <p style="margin-bottom: 4px;">Recurs actiu</p>
                                 <h2>{{ ucfirst($resource) }}</h2>
                             </div>
-                            <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-teal">Nou registre</a>
+                            @if ($hasApiToken)
+                                <a href="{{ route('app.dashboard', ['resource' => $resource]) }}" class="button button-teal">Nou registre</a>
+                            @endif
                         </div>
 
                         <table>
@@ -498,11 +511,15 @@
                                         @endforeach
                                         <td>
                                             <div class="actions">
-                                                <a href="{{ route('app.dashboard', ['resource' => $resource, 'edit' => $row['id']]) }}">Editar</a>
-                                                <form method="POST" action="{{ route('resources.destroy', ['resource' => $resource, 'id' => $row['id']]) }}" class="inline-form">
-                                                    @csrf
-                                                    <button type="submit" class="button button-light">Eliminar</button>
-                                                </form>
+                                                @if ($hasApiToken)
+                                                    <a href="{{ route('app.dashboard', ['resource' => $resource, 'edit' => $row['id']]) }}">Editar</a>
+                                                    <form method="POST" action="{{ route('resources.destroy', ['resource' => $resource, 'id' => $row['id']]) }}" class="inline-form">
+                                                        @csrf
+                                                        <button type="submit" class="button button-light">Eliminar</button>
+                                                    </form>
+                                                @else
+                                                    <span style="color: var(--muted); font-size: 13px;">Només lectura</span>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -515,6 +532,7 @@
                         </table>
                     </section>
 
+                    @if ($hasApiToken)
                     <section class="form-card">
                         <div class="section-title">
                             <div>
@@ -545,6 +563,7 @@
                             </button>
                         </form>
                     </section>
+                    @endif
                 </div>
             </div>
         </div>

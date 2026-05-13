@@ -7,6 +7,8 @@ use App\Http\Controllers\ResourceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'landing'])->name('login');
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthController::class, 'oauthCallback'])->name('auth.google.callback');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 

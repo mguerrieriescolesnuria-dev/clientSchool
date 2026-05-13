@@ -1,4 +1,4 @@
-# Client Laravel - Part 2
+# Client Laravel - Part 2 i Part 3
 
 **Document:** Evidencia de la Part 2 del projecte `clientSchool`  
 **Data:** 27 d'abril de 2026  
@@ -8,6 +8,7 @@
 
 - Carpeta `frontend/` amb una aplicació Laravel separada
 - Autenticació bàsica amb usuari i contrasenya
+- Integració amb Google OAuth a través del backend
 - Client Laravel per consumir `students`, `teachers` i `subjects`
 - Proxy Laravel cap al backend existent
 - Tests funcionals del client
@@ -38,11 +39,9 @@ php -S 127.0.0.1:8001 -t public router.php
 cd frontend
 cp .env.example .env
 composer install
-npm install
 php artisan key:generate
 php artisan migrate
-npm run build
-php artisan serve --host=127.0.0.1 --port=8080
+php artisan serve --host=127.0.0.1 --port=8082
 ```
 
 ## Tests
@@ -55,4 +54,5 @@ php artisan test
 ## Notes
 
 - La Part 1 no s'ha modificat funcionalment
-- El client d'aquesta entrega usa login bàsic i dashboard CRUD sense JavaScript obligatori
+- El client es pot obrir amb login bàsic o amb Google OAuth
+- Per fer CRUD sobre l'API protegida, el client necessita el JWT obtingut després del login amb Google

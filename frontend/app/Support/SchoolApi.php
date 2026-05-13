@@ -4,6 +4,7 @@ namespace App\Support;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class SchoolApi
 {
@@ -18,10 +19,18 @@ class SchoolApi
 
     public static function client(): PendingRequest
     {
-        return Http::baseUrl((string) config('school-api.base_url'))
+        $client = Http::baseUrl((string) config('school-api.base_url'))
             ->acceptJson()
             ->asJson()
             ->timeout((int) config('school-api.timeout'));
+
+        $token = Session::get('api_token');
+
+        if (is_string($token) && $token !== '') {
+            $client = $client->withToken($token);
+        }
+
+        return $client;
     }
 
     /**

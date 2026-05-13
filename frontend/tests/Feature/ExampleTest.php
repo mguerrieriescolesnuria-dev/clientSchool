@@ -18,6 +18,7 @@ class ExampleTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('clientSchool Frontend');
         $response->assertSee('Iniciar sessió');
+        $response->assertSee('Entrar amb Google');
     }
 
     public function test_authenticated_user_can_open_dashboard(): void
@@ -84,5 +85,31 @@ class ExampleTest extends TestCase
 
         $response->assertCreated();
         $response->assertJsonPath('message', 'Teacher created successfully');
+    }
+
+    public function test_oauth_callback_logs_user_into_frontend_and_stores_api_token(): void
+    {
+        Http::fake([
+            'http://127.0.0.1:8001/auth/me' => Http::response([
+                'status' => 200,
+                'data' => [
+                    'sub' => 'auth_user_1',
+                    'email' => 'oauth@example.com',
+                    'name' => 'OAuth User',
+                    'provider' => 'google',
+                ],
+            ], 200),
+        ]);
+
+        $response = $this->get('/auth/google/callback?token=test-jwt-token');
+
+        $response->assertRedirect('/app');
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', [
+            'email' => 'oauth@example.com',
+            'oauth_provider' => 'google',
+            'oauth_id' => 'auth_user_1',
+        ]);
+        $this->assertSame('test-jwt-token', session('api_token'));
     }
 }
